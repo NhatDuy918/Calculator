@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate{
     @IBOutlet var bntKetqua: UITextField!
     
     var ketqua = Double()
@@ -19,6 +19,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         bntKetqua.text = ""
         // Do any additional setup after loading the view, typically from a nib.
+        bntKetqua.delegate = self
         current0p = "="
     }
 
@@ -39,7 +40,11 @@ class ViewController: UIViewController {
             case "+":
                 ketqua = ketqua + Number
             case "-":
-                ketqua = ketqua - Number
+                if (bntKetqua.text?.isEmpty)! {
+                    bntKetqua.text = "-"
+                } else {
+                    ketqua = ketqua - Number
+                }
             case "*":
                 ketqua = ketqua * Number
             case "/":
@@ -61,7 +66,32 @@ class ViewController: UIViewController {
         current0p = "="
         bntKetqua.text = ("\(ketqua)")
     }
-    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let inverseSet = NSCharacterSet(charactersIn:"").inverted
+        
+        let components = string.components(separatedBy: inverseSet)
+        
+        let filtered = components.joined(separator: "")
+        
+        if filtered == string {
+            return true
+        } else {
+            if string == "." {
+                let countdots = textField.text!.components(separatedBy:".").count - 1
+                if countdots == 0 {
+                    return true
+                }else{
+                    if countdots > 0 && string == "." {
+                        return false
+                    } else {
+                        return true
+                    }
+                }
+            }else{
+                return false
+            }
+        }
+    }
     
    /* @IBAction func NumericAction(_ sender: Any) {
         if(bntKetqua.text?.isEmpty)! {
